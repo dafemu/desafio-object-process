@@ -10,6 +10,7 @@ import passport from "passport";
 
 import dotenv from "dotenv";
 import minimist from "minimist";
+import fork from "child_process";
 
 import { Strategy } from "passport-local";
 const LocalStrategy = Strategy;
@@ -100,6 +101,17 @@ app.get("/info", function (req, res) {
   });
 });
 
+app.get("/api/randoms ", function (req, res) {
+  const cantidad = req.params.cant;
+
+  const child = fork("./random.js");
+  child.send("start");
+  child.send(cantidad);
+  child.on("message", (numRand) => {
+    res.send(`La numero Random es ${numRand}`);
+  });
+});
+
 app.get("/login", (req, res) => {
   res.render("login");
 });
@@ -155,7 +167,7 @@ app.get("/logout", (req, res) => {
 });
 
 /*============================[Servidor]============================*/
-const PORT = process.env.PORT || 3000;;
+const PORT = process.env.PORT || 3000;
 const server = app.listen(PORT, () => {
   console.log(`Servidor escuchando en puerto ${PORT}`);
 });
