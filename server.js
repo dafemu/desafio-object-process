@@ -105,8 +105,8 @@ app.get("/api/randoms ", function (req, res) {
   const cantidad = req.params.cant;
 
   const child = fork("./random.js");
-  child.send("start");
-  child.send(cantidad);
+  child.send(["start", cantidad]);  
+
   child.on("message", (numRand) => {
     res.send(`La numero Random es ${numRand}`);
   });
